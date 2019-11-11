@@ -15,7 +15,11 @@ def set_poll(name, question, choices, answers):
 
 
 def get_poll(name):
-    return str(polls.get(name))
+    question = (polls.get(name)).get('question', '')
+    choices = (polls.get(name)).get('choices', '')
+    answers = (polls.get(name)).get('answers', '')
+    poll = {'question': question, 'choices': choices, 'answers': answers}
+    return jsonify(poll)
 
 
 @app.route('/poll', methods=['GET', 'POST'])
@@ -23,7 +27,6 @@ def poll():
     if request.method == 'POST':
         try:
             data = request.get_json()
-            print(data)
             name = data['name']
             question = data['question']
             choices = data['choices']
@@ -43,6 +46,24 @@ def poll():
         except Exception as e:
             print(e)
             return e
+
+
+@app.route('/poll/answer', methods=['POST'])
+def answer():
+    try:
+        data = request.get_json()
+        name = data['name']
+        choice = data['answer']
+        answers = (polls.get(name)).get('answers', '')
+        if choice in answers:
+            return 'Correct'
+
+        else:
+            return 'Incorrect'
+
+    except Exception as e:
+        print(e)
+        return e
 
 
 app.run(debug=True)
