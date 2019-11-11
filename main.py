@@ -6,15 +6,37 @@ polls = {}
 
 @app.route('/')
 def hello_world():
+    """
+    Returns a string
+    """
     return 'Carleton Poll'
 
 
 def set_poll(name, question, choices, answers):
+    """
+    Saves all the poll information to a dictionary called 'polls'
+
+    Args:
+        name: Name of the poll
+        question: Question of the poll
+        choices: List of choices
+        answers: List of correct answer(s)
+    Returns:
+        string: A status code
+    """
     polls[name] = {'question': question, 'choices': choices, 'answers': answers}
     return '200'
 
 
 def get_poll(name):
+    """
+    Returns some of the poll information to a user
+
+    Args:
+        name: Name of the poll
+    Returns:
+        json: A json object with the question and the choices of the poll
+    """
     question = (polls.get(name)).get('question', '')
     choices = (polls.get(name)).get('choices', '')
     answers = (polls.get(name)).get('answers', '')
@@ -24,6 +46,14 @@ def get_poll(name):
 
 @app.route('/poll', methods=['GET', 'POST'])
 def poll():
+    """
+    Gets all the poll information from a POST request to /poll
+
+    Returns:
+        set_poll: Calls the set_poll() function with the poll information passed as arguments
+    Raises:
+        Exception: Raises an exception if the function fails
+    """
     if request.method == 'POST':
         try:
             data = request.get_json()
@@ -50,6 +80,14 @@ def poll():
 
 @app.route('/poll/answer', methods=['POST'])
 def answer():
+    """
+    Gets the users selection and checks if it's correct or not
+
+    Returns:
+        string: Returns 'Correct' or 'Incorrect' based on the answer
+    Raises:
+        Exception: Raises an exception if the function fails
+    """
     try:
         data = request.get_json()
         name = data['name']
